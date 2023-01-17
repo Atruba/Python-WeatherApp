@@ -1,0 +1,70 @@
+from tkinter import *
+import requests
+
+rt = Tk()
+rt.geometry('500x2050')
+rt.title('Weather Update')  
+rt.configure(bg='black')
+
+
+
+title = Label(rt, text="Weather Update", fg='magenta', font="Helvetica 24 bold")
+title.pack()
+
+
+search = Label(rt, text="Search City ", fg='magenta', font="Helvetica 15 ")
+search.pack()
+
+canva = Canvas(rt, width=375, height=795)
+canva.pack()
+
+enter = Entry(rt)
+canva.create_window(199, 29, window=enter)
+
+
+def getWeather():
+    weatherApiKey = '68f4fa0d68fc858ac5aa55e4524ea24f'
+
+    city = enter.get()
+    url = "http://api.openweathermap.org/data/2.5/weather?appid=" + weatherApiKey + "&q=" + city
+    data = requests.get(url).json()
+
+    if data["cod"] != "404":
+        d = data["main"]
+
+    temperature = d["temp"]
+    temperature -= 274.04
+
+    pressure = d["pressure"]
+    pressure *= 0.0009869233
+
+    humidity = d["humidity"]
+
+    w = data["weather"]
+    weather_description = w[0]["description"]
+
+    degree_sign = u"\N{DEGREE SIGN}"
+
+    temperature = "{:.0f}".format(temperature) + degree_sign + "C"
+    pressure = "{:.0f}".format(pressure) + " atm"
+    humidity = str(humidity) + "%"
+    details = weather_description
+
+    cityy = Label(rt, text="Currently in " + city.upper(), fg='black', font="Helvetica 16 ")
+    canva.create_window(200, 180, window=cityy)
+
+    weatherr = Label(rt, text="Temperature: " + temperature + ", " + details, fg='black',font='Helvetica 16')
+    canva.create_window(200, 240, window=weatherr)
+
+    press = Label(rt, text="Pressure: " + pressure, fg='black', font="Helvetica 16 ")
+    canva.create_window(200, 300, window=press)
+
+    humid = Label(rt, text="Humidity: " + humidity, fg='black', font="Helvetica 16 ")
+    canva.create_window(200, 360, window=humid)
+
+
+
+btn = Button(text='Search', command=getWeather, bg='black', fg='white')
+canva.create_window(200, 80, window=btn)
+
+rt.mainloop()
